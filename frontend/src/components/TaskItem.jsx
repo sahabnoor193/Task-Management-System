@@ -2,8 +2,6 @@ import React from 'react';
 import { Check, Pencil, Trash2, AlertTriangle, AlertCircle, Bell, Calendar, Clock } from 'lucide-react';
 import { format, isToday, isTomorrow } from 'date-fns';
 
-
-
 export function TaskItem({ task, onToggle, onEdit, onDelete }) {
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this task?')) {
