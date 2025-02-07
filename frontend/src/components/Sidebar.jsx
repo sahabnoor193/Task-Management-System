@@ -1,14 +1,17 @@
 import React from 'react';
 import { ListTodo, CheckSquare, Clock, Settings, AlertTriangle, AlertCircle, Bell } from 'lucide-react';
 
-export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriorityChange }) {
+export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriorityChange, onTaskifyClick }) {
   return (
     <div className="w-full md:w-72 bg-white border-b md:border-r border-gray-200 shadow-lg p-4 md:p-6 flex flex-col md:min-h-screen">
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-2 bg-blue-100 rounded-lg">
+        <button 
+          onClick={onTaskifyClick} 
+          className="flex items-center gap-3 p-2 bg-blue-100 rounded-lg hover:bg-blue-200 transition-all"
+        >
           <ListTodo className="w-6 h-6 text-blue-600" />
-        </div>
-        <h1 className="text-xl font-bold text-gray-900">Task Manager</h1>
+          <h1 className="text-xl font-bold text-gray-900">taskify</h1>
+        </button>
       </div>
       
       <div className="space-y-6">

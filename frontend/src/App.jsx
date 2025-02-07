@@ -4,6 +4,8 @@ import { Sidebar } from './components/Sidebar';
 import { TaskItem } from './components/TaskItem';
 import { TaskForm } from './components/TaskForm';
 import { useNotification } from './hooks/useNotification';
+import { TaskProgress } from "./components/TaskProgress";
+
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -178,22 +180,13 @@ function App() {
                 onDelete={handleTaskDelete}
               />
             ))}
-            
-            {filteredAndSortedTasks.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg mb-4">
-                  {searchQuery ? 'No tasks found matching your search' : 'No tasks found'}
-                </p>
-                <button
-                  onClick={() => setIsFormOpen(true)}
-                  className="btn btn-primary inline-flex items-center gap-2"
-                >
-                  <Plus className="w-5 h-5" />
-                  Create your first task
-                </button>
-              </div>
-            )}
           </div>
+
+          <TaskProgress tasks={tasks} />
+
+          {tasks.length > 0 && tasks.map(task => (
+            <TaskTimer key={task.id} task={task} />
+          ))}
         </div>
       </main>
 
