@@ -14,9 +14,14 @@ function App() {
   };
 
   const handleLogin = (credentials) => {
-    // TODO: Implement authentication
+    // Replace with actual authentication logic (e.g., API call)
     setIsAuthenticated(true);
     setCurrentView('dashboard');
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setCurrentView('home');
   };
 
   return (
@@ -24,10 +29,7 @@ function App() {
       <Navbar 
         onViewChange={handleViewChange}
         isAuthenticated={isAuthenticated}
-        onLogout={() => {
-          setIsAuthenticated(false);
-          setCurrentView('home');
-        }}
+        onLogout={handleLogout} 
       />
       <main className="container mx-auto px-4 py-8 mt-16">
         {!isAuthenticated ? (
