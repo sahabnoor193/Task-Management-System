@@ -40,9 +40,9 @@ export function TaskForm({ task, onSubmit, onClose }) {
   };
 
   const priorityIcons = {
-    high: <AlertTriangle className="w-5 h-5" />,
-    medium: <AlertCircle className="w-5 h-5" />,
-    low: <Bell className="w-5 h-5" />,
+    high: <AlertTriangle className="w-5 h-5" />, 
+    medium: <AlertCircle className="w-5 h-5" />, 
+    low: <Bell className="w-5 h-5" />
   };
 
   const priorityColors = {
@@ -68,9 +68,7 @@ export function TaskForm({ task, onSubmit, onClose }) {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-              Title
-            </label>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Title</label>
             <input
               type="text"
               id="title"
@@ -83,9 +81,7 @@ export function TaskForm({ task, onSubmit, onClose }) {
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-              Description (optional)
-            </label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description (optional)</label>
             <textarea
               id="description"
               value={description}
@@ -97,9 +93,7 @@ export function TaskForm({ task, onSubmit, onClose }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Priority
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
             <div className="grid grid-cols-3 gap-2">
               {['high', 'medium', 'low'].map((p) => (
                 <button
@@ -121,9 +115,7 @@ export function TaskForm({ task, onSubmit, onClose }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">
-                Due Date
-              </label>
+              <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
               <input
                 type="datetime-local"
                 id="dueDate"
@@ -134,9 +126,7 @@ export function TaskForm({ task, onSubmit, onClose }) {
             </div>
 
             <div>
-              <label htmlFor="reminderDate" className="block text-sm font-medium text-gray-700 mb-1">
-                Reminder
-              </label>
+              <label htmlFor="reminderDate" className="block text-sm font-medium text-gray-700 mb-1">Reminder</label>
               <input
                 type="datetime-local"
                 id="reminderDate"
@@ -148,19 +138,8 @@ export function TaskForm({ task, onSubmit, onClose }) {
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-secondary"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-            >
-              {task ? 'Update Task' : 'Create Task'}
-            </button>
+            <button type="button" onClick={onClose} className="btn btn-secondary">Cancel</button>
+            <button type="submit" className="btn btn-primary">{task ? 'Update Task' : 'Create Task'}</button>
           </div>
         </form>
       </div>

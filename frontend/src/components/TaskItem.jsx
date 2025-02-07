@@ -10,15 +10,15 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }) {
   };
 
   const priorityIcons = {
-    high: <AlertTriangle className="w-5 h-5" />,
-    medium: <AlertCircle className="w-5 h-5" />,
-    low: <Bell className="w-5 h-5" />,
+    high: <AlertTriangle className="w-5 h-5 text-red-500" />, // Vibrant red
+    medium: <AlertCircle className="w-5 h-5 text-amber-500" />, // Warm amber
+    low: <Bell className="w-5 h-5 text-emerald-500" />, // Soft emerald
   };
 
   const priorityColors = {
-    high: 'text-red-600 bg-red-50',
-    medium: 'text-orange-600 bg-orange-50',
-    low: 'text-green-600 bg-green-50',
+    high: 'text-red-500 bg-red-100',
+    medium: 'text-amber-500 bg-amber-100',
+    low: 'text-emerald-500 bg-emerald-100',
   };
 
   const formatDate = (date) => {
@@ -30,18 +30,14 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }) {
   };
 
   return (
-    <div className={`group flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border transition-all duration-200 hover:shadow-md ${
-      task.completed
-        ? 'bg-gray-50 border-gray-200'
-        : 'bg-white border-gray-200 hover:border-blue-200'
-    }`}>
+    <div className={`group flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border transition-all duration-200 hover:shadow-md bg-white border-gray-200 hover:border-primary-300 dark:bg-gray-800 dark:border-gray-700 dark:hover:border-primary-500`}>
       <div className="flex items-start gap-4 mb-4 sm:mb-0">
         <button
           onClick={() => onToggle(task.id)}
           className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
             task.completed
-              ? 'bg-green-500 border-green-500 hover:bg-green-600 hover:border-green-600'
-              : 'border-gray-300 hover:border-green-500'
+              ? 'bg-primary-500 border-primary-500 hover:bg-primary-600 hover:border-primary-600'
+              : 'border-gray-300 hover:border-primary-500 dark:border-gray-500 dark:hover:border-primary-400'
           }`}
         >
           {task.completed && <Check className="w-4 h-4 text-white" />}
@@ -50,7 +46,7 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }) {
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className={`text-lg font-medium transition-all duration-200 ${
-              task.completed ? 'text-gray-500 line-through' : 'text-gray-900'
+              task.completed ? 'text-gray-500 line-through' : 'text-gray-900 dark:text-gray-100'
             }`}>
               {task.title}
             </h3>
@@ -61,18 +57,18 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }) {
           </div>
           
           {task.description && (
-            <p className="text-gray-600 text-sm mt-1 line-clamp-2">{task.description}</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mt-1 line-clamp-2">{task.description}</p>
           )}
           
-          <div className="flex flex-wrap gap-3 mt-2">
+          <div className="flex flex-wrap gap-3 mt-2 text-gray-500 dark:text-gray-400">
             {task.dueDate && (
-              <span className="inline-flex items-center gap-1 text-sm text-gray-500">
+              <span className="inline-flex items-center gap-1 text-sm">
                 <Calendar className="w-4 h-4" />
                 Due {formatDate(task.dueDate)}
               </span>
             )}
             {task.reminderDate && (
-              <span className="inline-flex items-center gap-1 text-sm text-gray-500">
+              <span className="inline-flex items-center gap-1 text-sm">
                 <Clock className="w-4 h-4" />
                 Reminder {formatDate(task.reminderDate)}
               </span>
@@ -84,14 +80,14 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }) {
       <div className="flex items-center gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
         <button
           onClick={() => onEdit(task)}
-          className="p-2 text-gray-600 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-all duration-200"
+          className="p-2 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-primary-100 transition-all duration-200 dark:text-gray-300 dark:hover:text-primary-400 dark:hover:bg-primary-900/30"
           title="Edit task"
         >
           <Pencil className="w-5 h-5" />
         </button>
         <button
           onClick={handleDelete}
-          className="p-2 text-gray-600 hover:text-red-600 rounded-lg hover:bg-red-50 transition-all duration-200"
+          className="p-2 text-gray-600 hover:text-red-600 rounded-lg hover:bg-red-50 transition-all duration-200 dark:text-gray-300 dark:hover:text-red-400 dark:hover:bg-red-900/30"
           title="Delete task"
         >
           <Trash2 className="w-5 h-5" />
