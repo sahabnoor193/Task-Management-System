@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { X, AlertTriangle, AlertCircle, Bell } from 'lucide-react';
 import { format } from 'date-fns';
 
-
 export function TaskForm({ task, onSubmit, onClose }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
