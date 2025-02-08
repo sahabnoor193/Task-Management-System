@@ -1,10 +1,12 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { Plus, Search } from 'lucide-react';
 import { Sidebar } from './components/Sidebar';
 import { TaskItem } from './components/TaskItem';
 import { TaskForm } from './components/TaskForm';
 import { useNotification } from './hooks/useNotification';
+import { Routes, Route } from 'react-router-dom'; // Add routing for other pages
+import './App.css';
+import Login from './pages/Login';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -92,102 +94,95 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
-      <Sidebar
-        activeFilter={activeFilter}
-        priorityFilter={priorityFilter}
-        onFilterChange={setActiveFilter}
-        onPriorityChange={setPriorityFilter}
-      />
+    <Routes>
+      <Route path="/" element={<Login />} />
+      {/* You can add other routes here if needed */}
+      <Route
+        path="/tasks"
+        element={
+          <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+            <Sidebar
+              activeFilter={activeFilter}
+              priorityFilter={priorityFilter}
+              onFilterChange={setActiveFilter}
+              onPriorityChange={setPriorityFilter}
+            />
+            <main className="flex-1 p-6 overflow-auto">
+              <div className="max-w-3xl mx-auto">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {activeFilter === 'completed' ? 'Completed Tasks' : activeFilter === 'pending' ? 'Pending Tasks' : 'All Tasks'}
+                    {priorityFilter !== 'all' && ` - ${priorityFilter} Priority`}
+                  </h2>
+                  <button onClick={() => setIsFormOpen(true)} className="btn btn-primary flex items-center gap-2">
+                    <Plus className="w-5 h-5" />
+                    Add Task
+                  </button>
+                </div>
 
-      <main className="flex-1 p-6 overflow-auto">
-        <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-            <h2 className="text-2xl font-bold text-gray-900">
-              {activeFilter === 'completed' ? 'Completed Tasks' : activeFilter === 'pending' ? 'Pending Tasks' : 'All Tasks'}
-              {priorityFilter !== 'all' && ` - ${priorityFilter} Priority`}
-            </h2>
-            <button onClick={() => setIsFormOpen(true)} className="btn btn-primary flex items-center gap-2">
-              <Plus className="w-5 h-5" />
-              Add Task
-            </button>
-          </div>
+                {/* Search & Sorting */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search tasks..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition"
+                    >
+                      <option value="date">Sort by Date</option>
+                      <option value="priority">Sort by Priority</option>
+                      <option value="title">Sort by Title</option>
+                    </select>
+                    <button
+                      onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                      className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-200 transition"
+                    >
+                      {sortOrder === 'asc' ? '↑' : '↓'}
+                    </button>
+                  </div>
+                </div>
 
-          {/* Search & Sorting */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search tasks..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition"
+                {/* Task List */}
+                <div className="space-y-4">
+                  {filteredAndSortedTasks.length > 0 ? (
+                    filteredAndSortedTasks.map(task => (
+                      <TaskItem
+                        key={task.id}
+                        task={task}
+                        onToggle={() => handleTaskToggle(task.id)}
+                        onEdit={() => handleTaskEdit(task)}
+                        onDelete={() => handleTaskDelete(task.id)}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center">No tasks found.</p>
+                  )}
+                </div>
+              </div>
+            </main>
+            {/* Task Form Modal */}
+            {isFormOpen && (
+              <TaskForm
+                task={editingTask}
+                onSubmit={handleTaskSubmit}
+                onClose={handleFormClose}
               />
-            </div>
-
-            <div className="flex gap-2">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition"
-              >
-                <option value="date">Sort by Date</option>
-                <option value="priority">Sort by Priority</option>
-                <option value="title">Sort by Title</option>
-              </select>
-              <button
-                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-200 transition"
-              >
-                {sortOrder === 'asc' ? '↑' : '↓'}
-              </button>
-            </div>
-          </div>
-
-          {/* Task List */}
-          <div className="space-y-4">
-            {filteredAndSortedTasks.length > 0 ? (
-              filteredAndSortedTasks.map(task => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onToggle={() => handleTaskToggle(task.id)}
-                  onEdit={() => handleTaskEdit(task)}
-                  onDelete={() => handleTaskDelete(task.id)}
-                />
-              ))
-            ) : (
-              <p className="text-gray-500 text-center">No tasks found.</p>
             )}
           </div>
-        </div>
-      </main>
-
-      {/* Task Form Modal */}
-      {isFormOpen && (
-        <TaskForm
-          task={editingTask}
-          onSubmit={handleTaskSubmit}
-          onClose={handleFormClose}
-        />
-      )}
-    </div>
-  );
-=======
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import './App.css'
-import Login from './pages/Login'
-
-function App() {
-  return (
-    <Routes>
-      <Route path='/' element={<Login />} />
+        }
+      />
     </Routes>
-  )
->>>>>>> shanzay
+  );
 }
 
 export default App;
