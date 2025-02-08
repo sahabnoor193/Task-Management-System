@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { Plus, Search } from 'lucide-react';
 import { Sidebar } from './components/Sidebar';
@@ -174,6 +175,19 @@ function App() {
       )}
     </div>
   );
+=======
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import './App.css'
+import Login from './pages/Login'
+
+function App() {
+  return (
+    <Routes>
+      <Route path='/' element={<Login />} />
+    </Routes>
+  )
+>>>>>>> shanzay
 }
 
 export default App;

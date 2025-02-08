@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+<<<<<<< HEAD
 
 @layer base {
   body {
@@ -59,3 +60,5 @@
 .task-item {
   animation: slideIn 0.2s ease-out;
 }
+=======
+>>>>>>> shanzay
