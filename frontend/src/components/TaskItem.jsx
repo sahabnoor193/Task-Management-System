@@ -6,7 +6,7 @@ import { format, isToday, isTomorrow } from 'date-fns';
 export function TaskItem({ task, onToggle, onEdit, onDelete }) {
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this task?')) {
-      onDelete(task.id);
+      onDelete(task._id);
     }
   };
 
@@ -41,7 +41,7 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }) {
       <div className="flex items-start gap-4 mb-4 sm:mb-0">
         <motion.button
           whileTap={{ scale: 0.8 }}
-          onClick={() => onToggle(task.id)}
+          onClick={() => onToggle(task._id)}
           className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 shadow-lg ${
             task.completed
               ? 'bg-blue-500 border-blue-500 hover:bg-blue-600 hover:border-blue-600'

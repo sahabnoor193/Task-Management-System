@@ -26,63 +26,81 @@ export function TaskForm({ task, onSubmit, onClose }) {
     }
   }, [task]);
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   onSubmit({
-  //     id: task?.id || crypto.randomUUID(),
-  //     title,
-  //     description,
-  //     priority,
-  //     dueDate: dueDate ? new Date(dueDate).toISOString() : null,
-  //     reminderDate: reminderDate ? new Date(reminderDate).toISOString() : null,
-  //     completed: task?.completed || false,
-  //     createdAt: task?.createdAt || new Date().toISOString(),
-  //   });
+//   const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   const token = localStorage.getItem("token");
+//   if (!token) {
+//     console.error("No token found");
+//     return;
+//   }
 
-  //   setTitle("");
-  //   setDescription("");
-  //   setPriority("medium");
-  //   setDueDate("");
-  //   setReminderDate("");
-  //   onClose();
-  // };
+//   const newTask = {
+//     title,
+//     description,
+//     priority,
+//     dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+//     reminderDate: reminderDate ? new Date(reminderDate).toISOString() : null,
+//     completed: task?.completed || false,
+//     createdAt: task?.createdAt || new Date().toISOString(),
+//   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("No token found");
-      return;
-    }
-  
-    const newTask = {
-      title,
-      description,
-      priority,
-      dueDate: dueDate ? new Date(dueDate).toISOString() : null,
-      reminderDate: reminderDate ? new Date(reminderDate).toISOString() : null,
-      completed: task?.completed || false,
-      createdAt: task?.createdAt || new Date().toISOString(),
-    };
-  
-    try {
-      const response = await fetch("http://localhost:5000/api/tasks", {
+//   try {
+//     const response = await fetch("http://localhost:5000/api/tasks", {
+//       method: task ? "PUT" : "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${token}`,
+//       },
+//       body: JSON.stringify(newTask),
+//     });
+
+//     if (!response.ok) throw new Error("Failed to create/update task");
+
+//     onSubmit();
+//   } catch (error) {
+//     console.error("Error creating/updating task:", error);
+//   }
+// };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.error("No token found");
+    return;
+  }
+
+  const newTask = {
+    title,
+    description,
+    priority,
+    dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+    reminderDate: reminderDate ? new Date(reminderDate).toISOString() : null,
+    completed: task?.completed || false,
+    createdAt: task?.createdAt || new Date().toISOString(),
+  };
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/tasks${task ? `/${task._id}` : ""}`,
+      {
         method: task ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newTask),
-      });
-  
-      if (!response.ok) throw new Error("Failed to create/update task");
-  
-      onSubmit();
-    } catch (error) {
-      console.error("Error creating/updating task:", error);
-    }
-  };
-  
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to create/update task");
+
+    onSubmit();
+  } catch (error) {
+    console.error("Error creating/updating task:", error);
+  }
+};
+
   const priorityIcons = {
     high: <AlertTriangle className="w-5 h-5 text-red-500" />,
     medium: <AlertCircle className="w-5 h-5 text-yellow-500" />,

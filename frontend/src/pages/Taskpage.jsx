@@ -18,6 +18,60 @@ export function TasksPage() {
   const [editingTask, setEditingTask] = useState(null);
   const [user, setUser] = useState(null); // 🔹 Store logged-in user info
   const { permission, requestNotificationPermission, scheduleNotification } = useNotification();
+
+  const handleEditTask = async (updatedTask) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+  
+      const response = await fetch(`http://localhost:5000/api/tasks/${updatedTask._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedTask),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update task");
+      }
+  
+      fetchTasks(); // Refresh tasks after updating
+      setIsFormOpen(false);
+      setEditingTask(null);
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
+  };
+  
+  const handleDeleteTask = async (taskId) => {
+    if (!window.confirm("Are you sure you want to delete this task?")) return;
+  
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+  
+      const response = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete task");
+      }
+  
+      fetchTasks(); // Refresh task list after deletion
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  };  
   
   // Fetch user details
   const fetchUser = async () => {
@@ -110,7 +164,7 @@ export function TasksPage() {
     navigate('/signin');
   };
   
-
+  
   return (
     <div className="min-h-screen bg-gray-800 flex flex-col md:flex-row">
       <Sidebar
@@ -174,6 +228,7 @@ export function TasksPage() {
                       setEditingTask(task);
                       setIsFormOpen(true);
                     }}
+                    onDelete={handleDeleteTask}
                   />
                 ))}
               </motion.div>
@@ -201,6 +256,7 @@ export function TasksPage() {
               setIsFormOpen(false);
               setEditingTask(null);
             }}
+            onDelete={handleDeleteTask}
           />
         )}
       </AnimatePresence>
