@@ -1,12 +1,12 @@
 import express from "express";
-import { getTasks, createTask, updateTask, deleteTask } from "../controllers/taskContorller.js"; // Adjust the path as needed
-import { authMiddleware } from "../middleware/authMiddleware.js"; // Adjust the path as needed
+import { getTasks, createTask, updateTask, deleteTask } from "../controllers/taskContorller.js";
+import authenticateToken from "../middleware/authMiddleware.js"; // ✅ Import the default export correctly
 
 const router = express.Router();
 
-router.get('/', authMiddleware, getTasks);
-router.post('/', authMiddleware, createTask);
-router.put('/:id', authMiddleware, updateTask);
-router.delete('/:id', authMiddleware, deleteTask);
+router.get('/', authenticateToken, getTasks);
+router.post('/', authenticateToken, createTask);
+router.put('/:id', authenticateToken, updateTask);
+router.delete('/:id', authenticateToken, deleteTask);
 
 export default router;

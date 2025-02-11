@@ -21,30 +21,32 @@ export function SignIn() {
     e.preventDefault();
     setLoading(true);
     setError('');
-
+  
     try {
       const response = await fetch('http://localhost:5000/api/auth/signin', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
-        throw new Error(data.message || 'Invalid credentials');
+        throw new Error(data.message || 'Sign-in failed');
       }
-
+  
+      // Store token and user data in localStorage
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user)); // Store user info
+  
+      // Redirect to the main tasks page
       navigate('/tasks');
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      setError(error.message);
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
