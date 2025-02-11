@@ -1,7 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ListTodo, CheckSquare, Clock, AlertTriangle, AlertCircle, Bell } from 'lucide-react';
 
 export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriorityChange, onTaskifyClick }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Fetch user from localStorage on mount
+    const fetchUser = () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    };
+    fetchUser();
+    // Listen for localStorage changes (in case another component updates it)
+    window.addEventListener('storage', fetchUser);
+    return () => {
+      window.removeEventListener('storage', fetchUser);
+    };
+  }, []);
+
   return (
     <div className="w-full md:w-72 bg-gray-900 border-b md:border-r border-gray-700 shadow-lg p-4 md:p-6 flex flex-col md:min-h-screen text-gray-300">
       <div className="flex items-center gap-3 mb-8">
@@ -13,7 +31,8 @@ export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriori
           <h1 className="text-xl font-bold text-gray-100">taskify</h1>
         </button>
       </div>
-      
+
+      {/* Status Section */}
       <div className="space-y-6">
         <div>
           <h2 className="text-sm font-semibold text-gray-500 mb-2 px-4">Status</h2>
@@ -37,6 +56,7 @@ export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriori
           </nav>
         </div>
 
+        {/* Priority Section */}
         <div>
           <h2 className="text-sm font-semibold text-gray-500 mb-2 px-4">Priority</h2>
           <nav className="space-y-1">
@@ -59,6 +79,15 @@ export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriori
             ))}
           </nav>
         </div>
+      </div>
+
+      {/* Show Logged-In User Name */}
+      <div className="mt-auto pt-6 text-center">
+        {user ? (
+          <p className="text-lg font-bold text-gray-100">Welcome, {user.name}</p>
+        ) : (
+          <p className="text-lg font-bold text-gray-100">Not Logged In</p>
+        )}
       </div>
     </div>
   );

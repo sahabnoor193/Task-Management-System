@@ -49,7 +49,7 @@ export function SignUp() {
       }
 
       localStorage.setItem('token', data.token);
-      navigate('/tasks');
+      navigate('/signin');
     } catch (err) {
       setError(err.message);
     } finally {

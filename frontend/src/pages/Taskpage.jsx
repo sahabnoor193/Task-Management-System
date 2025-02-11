@@ -16,7 +16,33 @@ export function TasksPage() {
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const [user, setUser] = useState(null); // 🔹 Store logged-in user info
   const { permission, requestNotificationPermission, scheduleNotification } = useNotification();
+  
+  // Fetch user details
+  const fetchUser = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/signin');
+        return;
+      }
+
+      const response = await fetch('http://localhost:5000/api/auth/user', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user');
+      }
+
+      const userData = await response.json();
+      setUser(userData); // 🔹 Store the user's details
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      navigate('/signin'); // Redirect if user fetch fails
+    }
+  };
 
   // Fetch tasks from backend
   const fetchTasks = async () => {
@@ -28,9 +54,7 @@ export function TasksPage() {
       }
 
       const response = await fetch('http://localhost:5000/api/tasks', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Authorization': `Bearer ${token}` },
       });
 
       if (!response.ok) {
@@ -46,6 +70,7 @@ export function TasksPage() {
 
   // Initial fetch and notification setup
   useEffect(() => {
+    fetchUser();  // 🔹 Fetch user data
     fetchTasks();
     if (permission === 'default') {
       requestNotificationPermission();
@@ -56,19 +81,16 @@ export function TasksPage() {
   useEffect(() => {
     let filtered = [...tasks];
 
-    // Status filter
     if (activeFilter !== 'all') {
       filtered = filtered.filter(task => 
         activeFilter === 'completed' ? task.completed : !task.completed
       );
     }
 
-    // Priority filter
     if (priorityFilter !== 'all') {
       filtered = filtered.filter(task => task.priority === priorityFilter);
     }
 
-    // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(task =>
@@ -80,107 +102,19 @@ export function TasksPage() {
     setFilteredTasks(filtered);
   }, [tasks, activeFilter, priorityFilter, searchQuery]);
 
-  // Handle task creation/update
-  const handleTaskSubmit = async (taskData) => {
-    try {
-      const token = localStorage.getItem('token');
-      const isEditing = Boolean(editingTask);
-      const url = isEditing 
-        ? `http://localhost:5000/api/tasks/${editingTask._id}`
-        : 'http://localhost:5000/api/tasks';
-      
-      const response = await fetch(url, {
-        method: isEditing ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(taskData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save task');
-      }
-
-      const savedTask = await response.json();
-      
-      if (isEditing) {
-        setTasks(tasks.map(t => t._id === savedTask._id ? savedTask : t));
-      } else {
-        setTasks([savedTask, ...tasks]);
-      }
-
-      // Schedule notification if reminder is set
-      if (taskData.reminderDate) {
-        scheduleNotification(
-          taskData.title,
-          taskData.description || 'Task reminder',
-          taskData.reminderDate
-        );
-      }
-
-      setIsFormOpen(false);
-      setEditingTask(null);
-    } catch (error) {
-      console.error('Error saving task:', error);
-      alert('Failed to save task. Please try again.');
-    }
-  };
-
-  // Handle task toggle
-  const handleTaskToggle = async (taskId) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/toggle`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to toggle task');
-      }
-
-      const updatedTask = await response.json();
-      setTasks(tasks.map(t => t._id === taskId ? updatedTask : t));
-    } catch (error) {
-      console.error('Error toggling task:', error);
-      alert('Failed to update task status. Please try again.');
-    }
-  };
-
-  // Handle task deletion
-  const handleTaskDelete = async (taskId) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete task');
-      }
-
-      setTasks(tasks.filter(t => t._id !== taskId));
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      alert('Failed to delete task. Please try again.');
-    }
-  };
-
   // Handle logout
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user'); // Also remove user info
+    setUser(null);
     navigate('/signin');
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-800 flex flex-col md:flex-row">
       <Sidebar
+        user={user}  // 🔹 Pass user data to Sidebar
         activeFilter={activeFilter}
         priorityFilter={priorityFilter}
         onFilterChange={setActiveFilter}
@@ -231,20 +165,15 @@ export function TasksPage() {
 
           <AnimatePresence mode="popLayout">
             {filteredTasks.length > 0 ? (
-              <motion.div
-                layout
-                className="space-y-4"
-              >
+              <motion.div layout className="space-y-4">
                 {filteredTasks.map(task => (
                   <TaskItem
                     key={task._id}
                     task={task}
-                    onToggle={handleTaskToggle}
                     onEdit={(task) => {
                       setEditingTask(task);
                       setIsFormOpen(true);
                     }}
-                    onDelete={handleTaskDelete}
                   />
                 ))}
               </motion.div>
@@ -255,9 +184,7 @@ export function TasksPage() {
                 className="text-center py-12"
               >
                 <p className="text-gray-400 text-lg">
-                  {searchQuery
-                    ? 'No tasks found matching your search'
-                    : 'No tasks yet. Click "Add Task" to get started!'}
+                  {searchQuery ? 'No tasks found matching your search' : 'No tasks yet. Click "Add Task" to get started!'}
                 </p>
               </motion.div>
             )}
@@ -269,8 +196,8 @@ export function TasksPage() {
         {isFormOpen && (
           <TaskForm
             task={editingTask}
-            onSubmit={handleTaskSubmit}
-            onClose={() => {
+            onSubmit={() => {
+              fetchTasks(); // Reload tasks after a new task is added
               setIsFormOpen(false);
               setEditingTask(null);
             }}
