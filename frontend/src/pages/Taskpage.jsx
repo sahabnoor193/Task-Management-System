@@ -164,7 +164,39 @@ export function TasksPage() {
     navigate('/signin');
   };
   
-  
+  const toggleTaskCompletion = async (taskId) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/signin');
+      return;
+    }
+
+    const taskToUpdate = tasks.find(task => task._id === taskId);
+    if (!taskToUpdate) return;
+
+    const response = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ completed: !taskToUpdate.completed }), // Toggle the completed status
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update task status');
+    }
+
+    const updatedTask = await response.json();
+    setTasks(prevTasks =>
+      prevTasks.map(task => (task._id === updatedTask._id ? updatedTask : task))
+    );
+  } catch (error) {
+    console.error('Error toggling task:', error);
+  }
+};
+
   return (
     <div className="min-h-screen bg-gray-800 flex flex-col md:flex-row">
       <Sidebar
@@ -256,6 +288,7 @@ export function TasksPage() {
               setIsFormOpen(false);
               setEditingTask(null);
             }}
+            onClose={() => setIsFormOpen(false)} // Make sure this is here
             onDelete={handleDeleteTask}
           />
         )}
