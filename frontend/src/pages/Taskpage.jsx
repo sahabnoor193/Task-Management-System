@@ -19,6 +19,32 @@ export function TasksPage() {
   const [user, setUser] = useState(null); // 🔹 Store logged-in user info
   const { permission, requestNotificationPermission, scheduleNotification } = useNotification();
 
+  const handleToggleTaskCompletion = async (taskId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+  
+      const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/toggle`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update task status");
+      }
+  
+      fetchTasks(); // Refresh the task list
+    } catch (error) {
+      console.error("Error toggling task completion:", error);
+    }
+  };
+  
   const handleEditTask = async (updatedTask) => {
     try {
       const token = localStorage.getItem('token');
@@ -49,8 +75,7 @@ export function TasksPage() {
   };
   
   const handleDeleteTask = async (taskId) => {
-    if (!window.confirm("Are you sure you want to delete this task?")) return;
-  
+    // if (!window.confirm("Are you sure you want to delete this task?")) return;
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -164,38 +189,6 @@ export function TasksPage() {
     navigate('/signin');
   };
   
-  const toggleTaskCompletion = async (taskId) => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/signin');
-      return;
-    }
-
-    const taskToUpdate = tasks.find(task => task._id === taskId);
-    if (!taskToUpdate) return;
-
-    const response = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ completed: !taskToUpdate.completed }), // Toggle the completed status
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to update task status');
-    }
-
-    const updatedTask = await response.json();
-    setTasks(prevTasks =>
-      prevTasks.map(task => (task._id === updatedTask._id ? updatedTask : task))
-    );
-  } catch (error) {
-    console.error('Error toggling task:', error);
-  }
-};
 
   return (
     <div className="min-h-screen bg-gray-800 flex flex-col md:flex-row">
@@ -256,6 +249,7 @@ export function TasksPage() {
                   <TaskItem
                     key={task._id}
                     task={task}
+                    onToggle={handleToggleTaskCompletion}  // Pass function
                     onEdit={(task) => {
                       setEditingTask(task);
                       setIsFormOpen(true);

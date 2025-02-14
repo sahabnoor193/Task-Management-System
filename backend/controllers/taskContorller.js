@@ -13,8 +13,8 @@ export const getTasks = async (req, res) => {
 // Create task
 export const createTask = async (req, res) => {
   try {
-    const { title, description, priority, reminderDate } = req.body;
-    const task = new Task({ userId: req.user.id, title, description, priority, reminderDate });
+    const { title, description, priority, dueDate, reminderDate } = req.body;
+    const task = new Task({ userId: req.user.id, title, description, priority, dueDate, reminderDate});
     await task.save();
     
     res.status(201).json(task);
@@ -46,5 +46,21 @@ export const deleteTask = async (req, res) => {
     res.json({ message: 'Task deleted' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting task', error });
+  }
+};
+
+// Toggle task completion
+export const toggleTaskCompletion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const task = await Task.findOne({ _id: id, userId: req.user.id });
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+    
+    task.completed = !task.completed;
+    await task.save();
+
+    res.json(task);
+  } catch (error) {
+    res.status(500).json({ message: 'Error toggling task completion', error });
   }
 };
