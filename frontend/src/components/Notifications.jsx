@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Sidebar } from "./Sidebar"; // Import Sidebar component
 
 export function Notifications() {
   const [notifications, setNotifications] = useState([]);
@@ -17,19 +18,30 @@ export function Notifications() {
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-gray-900 text-gray-300 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold text-gray-100 mb-4">Notifications</h2>
-      <div className="space-y-3">
-        {notifications.length > 0 ? (
-          notifications.map((notif) => (
-            <div key={notif.id} className="p-4 bg-gray-800 rounded-lg flex justify-between items-center">
-              <span>{notif.message}</span>
-              <span className="text-sm text-gray-400">{notif.time}</span>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-400">No new notifications.</p>
-        )}
+    <div className="flex">
+      {/* Sidebar */}
+      <Sidebar 
+        activeFilter="all"
+        priorityFilter="all"
+        onFilterChange={() => {}}
+        onPriorityChange={() => {}}
+      />
+
+      {/* Main Notifications Content */}
+      <div className="flex-1 max-w-2xl mx-auto p-6 bg-gray-900 text-gray-300 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold text-gray-100 mb-4">Notifications</h2>
+        <div className="space-y-3">
+          {notifications.length > 0 ? (
+            notifications.map((notif) => (
+              <div key={notif.id} className="p-4 bg-gray-800 rounded-lg flex justify-between items-center">
+                <span>{notif.message}</span>
+                <span className="text-sm text-gray-400">{notif.time}</span>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-400">No new notifications.</p>
+          )}
+        </div>
       </div>
     </div>
   );
