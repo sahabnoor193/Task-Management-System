@@ -6,7 +6,6 @@ import { Sidebar } from '../components/Sidebar';
 import { TaskForm } from '../components/TaskForm';
 import { TaskItem } from '../components/TaskItem';
 import { useNotification } from '../hooks/useNotification';
-
 export function TasksPage() {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
