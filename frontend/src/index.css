@@ -5,7 +5,7 @@
 /* ✅ Base Styles */
 @layer base {
   body {
-    @apply antialiased text-gray-800 bg-gray-50 dark:bg-gray-900 dark:text-black transition-all duration-300;
+    @apply antialiased text-gray-800 bg-gray-50 dark:bg-gray-900 dark:text-gray-200 transition-all duration-300;
   }
 }
 
@@ -100,4 +100,19 @@
 
 .mobile-menu.active {
   @apply block;
+}
+
+/* ✅ Sidebar (Improved for Mobile) */
+.sidebar {
+  @apply w-64 h-screen fixed top-0 left-0 bg-gray-900 text-white p-4 transform -translate-x-full 
+  md:translate-x-0 transition-transform duration-300 ease-in-out;
+}
+
+.sidebar.open {
+  @apply translate-x-0;
+}
+
+/* ✅ Responsive Sidebar Button */
+.sidebar-toggle {
+  @apply absolute top-4 left-4 md:hidden text-white focus:outline-none;
 }
