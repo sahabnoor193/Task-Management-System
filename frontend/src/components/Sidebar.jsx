@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ListTodo, CheckSquare, Clock, AlertTriangle, AlertCircle, Bell } from 'lucide-react';
+import { ListTodo, CheckSquare, Clock, AlertTriangle, AlertCircle, Bell, BellRing } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriorityChange, onTaskifyClick }) {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch user from localStorage on mount
@@ -54,7 +56,17 @@ export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriori
               </button>
             ))}
           </nav>
+            <nav className="space-y-1">
+              <button
+                onClick={() => navigate('/notifications')} // Navigate to Notifications Page
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 text-gray-400 hover:bg-gray-800 hover:text-gray-200`}
+              >
+                <BellRing className="w-5 h-5" />
+                <span className="font-medium">Notifications</span>
+              </button>
+            </nav>
         </div>
+        
 
         {/* Priority Section */}
         <div>

@@ -17,6 +17,7 @@ export const createTask = async (req, res) => {
     const task = new Task({ userId: req.user.id, title, description, priority, dueDate, reminderDate});
     await task.save();
     
+    
     res.status(201).json(task);
   } catch (error) {
     res.status(500).json({ message: 'Error creating task', error });
