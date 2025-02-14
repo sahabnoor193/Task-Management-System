@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ListTodo, CheckSquare, Clock, AlertTriangle, AlertCircle, Bell, User } from "lucide-react";
+import { ListTodo, CheckSquare, Clock, AlertTriangle, AlertCircle, BellRing, Bell, User } from "lucide-react";
 import { useNavigate } from "react-router-dom"; // Assuming you're using React Router
 
 export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriorityChange, onTaskifyClick }) {
@@ -32,13 +32,13 @@ export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriori
 </button>
 
 
-        {/* Notification Icon */}
+        {/* Notification Icon
         <button
           onClick={() => navigate("/notifications")}
           className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all hover:scale-105"
         >
           <Bell className="w-6 h-6 text-gray-400" />
-        </button>
+        </button> */}
       </div>
 
       {/* Status Section */}
@@ -107,7 +107,12 @@ export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriori
           className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all hover:scale-105 text-gray-300"
         >
           <User className="w-6 h-6 text-gray-400" />
-          <span className="font-medium">Settings</span>
+          {/* <span className="font-medium">Settings</span> */}
+          {user ? (
+          <p className="text-sm font-bold text-gray-100">Welcome, {user.name}</p>
+        ) : (
+          <p className="text-sm font-bold text-gray-100">Not Logged In</p>
+        )}
         </button>
       </div>
     </div>
