@@ -20,19 +20,18 @@ export function Profile() {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        setUser({
+          name: parsedUser.name || "John Doe",
+          email: parsedUser.email || "johndoe@example.com",
+          avatar: parsedUser.avatar || "https://via.placeholder.com/150",
+          bio: parsedUser.bio || "A passionate web developer.",
+          linkedin: parsedUser.linkedin || "",
+          github: parsedUser.github || "",
+        });
       } catch (error) {
         console.error("Error parsing user data:", error);
       }
-    } else {
-      setUser({
-        name: "John Doe",
-        email: "johndoe@example.com",
-        avatar: "https://via.placeholder.com/150",
-        bio: "A passionate web developer.",
-        linkedin: "",
-        github: "",
-      });
     }
   }, []);
 
@@ -69,6 +68,7 @@ export function Profile() {
   return (
     <div className="flex min-h-screen bg-gray-950 text-white">
       <Sidebar activeFilter="profile" priorityFilter="all" onFilterChange={() => {}} onPriorityChange={() => {}} />
+      
       <motion.div 
         className="flex-1 flex flex-col items-center justify-center p-10"
         initial={{ opacity: 0, y: 20 }}
@@ -82,7 +82,7 @@ export function Profile() {
 
           <div className="flex flex-col items-center space-y-4">
             <motion.img
-              src={user.avatar}
+              src={user.avatar || "https://via.placeholder.com/150"}  // Fix for empty avatar
               alt="User Avatar"
               className="w-28 h-28 rounded-full border-4 border-green-500 shadow-md"
               whileHover={{ scale: 1.1 }}
