@@ -32,13 +32,13 @@ export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriori
 </button>
 
 
-        {/* Notification Icon
+        {/* Notification Icon */}
         <button
           onClick={() => navigate("/notifications")}
           className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all hover:scale-105"
         >
           <Bell className="w-6 h-6 text-gray-400" />
-        </button> */}
+        </button>
       </div>
 
       {/* Status Section */}
