@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { ListTodo, CheckSquare, Clock, AlertTriangle, AlertCircle, BellRing, Bell, User } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // Assuming you're using React Router
+import { ListTodo, CheckSquare, Clock, AlertTriangle, AlertCircle, Bell, User } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriorityChange, onTaskifyClick }) {
+export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriorityChange }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
-  const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
     const fetchUser = () => {
@@ -20,84 +21,99 @@ export function Sidebar({ activeFilter, priorityFilter, onFilterChange, onPriori
     };
   }, []);
 
+
+  // Load saved filters from localStorage on component mount
+  useEffect(() => {
+    const savedFilter = localStorage.getItem("activeFilter") || "all";
+    const savedPriority = localStorage.getItem("priorityFilter") || "all";
+    onFilterChange(savedFilter);
+    onPriorityChange(savedPriority);
+  }, []);
+
+  // Save filters when they change
+  useEffect(() => {
+    localStorage.setItem("activeFilter", activeFilter);
+    localStorage.setItem("priorityFilter", priorityFilter);
+  }, [activeFilter, priorityFilter]);
+
   return (
     <div className="w-full md:w-72 bg-gray-900 border-b md:border-r border-gray-700 shadow-lg p-4 md:p-6 flex flex-col md:min-h-screen text-gray-300">
-      <div className="flex items-center justify-between mb-8">
-      <button
-  onClick={() => navigate("/")} // Navigate to homepage
-  className="flex items-center gap-3 p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all hover:scale-105"
->
-  <ListTodo className="w-6 h-6 text-gray-400" />
-  <h1 className="text-xl font-bold text-gray-100 cursor-pointer">taskify</h1>
-</button>
+      
+      {/* Logo + Notifications */}
+      <div className="flex items-center justify-between mb-6">
+        <button 
+          onClick={() => navigate("/tasks")} 
+          className="flex items-center gap-3 p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all hover:scale-105"
+        >
+          <ListTodo className="w-6 h-6 text-gray-400" />
+          <h1 className="text-xl font-bold text-gray-100">taskify</h1>
+        </button>
 
-
-        {/* Notification Icon */}
-        <button
-          onClick={() => navigate("/notifications")}
-          className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all hover:scale-105"
+        {/* Notifications Icon */}
+        <button 
+          onClick={() => navigate("/notifications")} 
+          className={`p-2 rounded-lg transition-all hover:scale-105 ${
+            location.pathname === "/notifications" ? "bg-gray-700" : "bg-gray-800 hover:bg-gray-700"
+          }`}
         >
           <Bell className="w-6 h-6 text-gray-400" />
         </button>
       </div>
 
-      {/* Status Section */}
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-sm font-semibold text-gray-500 mb-2 px-4">Status</h2>
-          <nav className="space-y-1">
-            {[
-              { key: "all", label: "All Tasks", icon: <ListTodo className="w-5 h-5" /> },
-              { key: "completed", label: "Completed", icon: <CheckSquare className="w-5 h-5" />, bg: "bg-green-700", text: "text-green-200" },
-              { key: "pending", label: "Pending", icon: <Clock className="w-5 h-5" />, bg: "bg-yellow-700", text: "text-yellow-200" },
-            ].map(({ key, label, icon, bg = "bg-gray-700", text = "text-gray-100" }) => (
-              <button
-                key={key}
-                onClick={() => onFilterChange(key)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 ${
-                  activeFilter === key ? `${bg} ${text}` : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
-                }`}
-              >
-                {icon}
-                <span className="font-medium">{label}</span>
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* Priority Section */}
-        <div>
-          <h2 className="text-sm font-semibold text-gray-500 mb-2 px-4">Priority</h2>
-          <nav className="space-y-1">
-            {[
-              { key: "all", label: "All Priorities", icon: <Bell className="w-5 h-5" /> },
-              { key: "high", label: "High Priority", icon: <AlertTriangle className="w-5 h-5" />, bg: "bg-red-700", text: "text-red-200" },
-              { key: "medium", label: "Medium Priority", icon: <AlertCircle className="w-5 h-5" />, bg: "bg-orange-700", text: "text-orange-200" },
-              { key: "low", label: "Low Priority", icon: <Bell className="w-5 h-5" />, bg: "bg-green-700", text: "text-green-200" },
-            ].map(({ key, label, icon, bg = "bg-gray-700", text = "text-gray-100" }) => (
-              <button
-                key={key}
-                onClick={() => onPriorityChange(key)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 ${
-                  priorityFilter === key ? `${bg} ${text}` : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
-                }`}
-              >
-                {icon}
-                <span className="font-medium">{label}</span>
-              </button>
-            ))}
-          </nav>
-        </div>
+      {/* Status Filters */}
+      <div className="mt-4">
+        <h2 className="text-sm font-semibold text-gray-500 mb-2 px-4">Status</h2>
+        <nav className="space-y-1">
+          {["all", "completed", "pending"].map((key) => (
+            <button
+              key={key}
+              onClick={() => {
+                onFilterChange(key);
+                navigate("/tasks");
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 ${
+                activeFilter === key ? "bg-gray-700 text-white" : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
+              }`}
+            >
+              {key === "all" ? <ListTodo className="w-5 h-5" /> : key === "completed" ? <CheckSquare className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
+              <span className="font-medium capitalize">{key} Tasks</span>
+            </button>
+          ))}
+        </nav>
       </div>
 
-      {/* Settings Button */}
-      <div className="mt-auto pt-6 text-center">
+      {/* Priority Filters */}
+      <div className="mt-6">
+        <h2 className="text-sm font-semibold text-gray-500 mb-2 px-4">Priority</h2>
+        <nav className="space-y-1">
+          {["all", "high", "medium", "low"].map((key) => (
+            <button
+              key={key}
+              onClick={() => {
+                onPriorityChange(key);
+                navigate("/tasks");
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 ${
+                priorityFilter === key ? "bg-gray-700 text-white" : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
+              }`}
+            >
+              {key === "high" ? <AlertTriangle className="w-5 h-5" /> : key === "medium" ? <AlertCircle className="w-5 h-5" /> : <Bell className="w-5 h-5" />}
+              <span className="font-medium capitalize">{key} Priority</span>
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Profile (At Bottom) */}
+      <div className="mt-auto text-center">
         <button
           onClick={() => navigate("/profile")}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all hover:scale-105 text-gray-300"
+          className={`w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg transition-all hover:scale-105 ${
+            location.pathname === "/profile" ? "bg-gray-700" : "bg-gray-800 hover:bg-gray-700"
+          } text-gray-300`}
         >
           <User className="w-6 h-6 text-gray-400" />
-          {/* <span className="font-medium">Settings</span> */}
+          {/* <span className="font-medium">Profile</span> */}
           {user ? (
           <p className="text-sm font-bold text-gray-100">Welcome, {user.name}</p>
         ) : (

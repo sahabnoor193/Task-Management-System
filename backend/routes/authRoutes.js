@@ -81,4 +81,22 @@ router.get("/user", authenticateToken, async (req, res) => {
   }
 });
 
+// 🔹 Update User Profile (Protected Route)
+router.put("/update", authenticateToken, async (req, res) => {
+  try {
+    const { name, avatar, bio, linkedin, github, discord } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { name, avatar, bio, linkedin, github, discord },
+      { new: true, runValidators: true }
+    ).select("-password"); // Exclude password from response
+
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating profile", error });
+  }
+});
+
+
 export default router;
