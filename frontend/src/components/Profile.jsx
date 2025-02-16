@@ -389,7 +389,7 @@ export function Profile() {
               name="discord"
               value={user.discord}
               onChange={handleChange}
-              placeholder="GitHub Profile"
+              placeholder="Discord Profile"
               className="p-2 bg-gray-800 border border-gray-500 rounded"
             />
           </div>
