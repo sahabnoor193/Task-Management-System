@@ -122,7 +122,8 @@ export function TaskForm({ task, onSubmit, onClose }) {
             ))}
           </div>
 
-          <input
+          {/* <input
+          placeholder="Task Description"
             type="datetime-local"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
@@ -133,7 +134,28 @@ export function TaskForm({ task, onSubmit, onClose }) {
             value={reminderDate}
             onChange={(e) => setReminderDate(e.target.value)}
             className="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-blue-500 text-white focus:outline-none shadow-lg"
-          />
+          /> */}
+
+<div className="space-y-2">
+  <label className="text-gray-400 text-sm">Due Date</label>
+  <input
+    type="datetime-local"
+    value={dueDate}
+    onChange={(e) => setDueDate(e.target.value)}
+    className="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-blue-500 text-white focus:outline-none shadow-lg"
+  />
+</div>
+
+<div className="space-y-2">
+  <label className="text-gray-400 text-sm">Reminder Date</label>
+  <input
+    type="datetime-local"
+    value={reminderDate}
+    onChange={(e) => setReminderDate(e.target.value)}
+    className="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-blue-500 text-white focus:outline-none shadow-lg"
+  />
+</div>
+
 
           <div className="flex justify-end gap-3">
             <motion.button
