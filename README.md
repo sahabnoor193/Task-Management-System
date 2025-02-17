@@ -55,7 +55,6 @@ cd frontend
 npm run dev
 
 
-Short video:
 
 
 
