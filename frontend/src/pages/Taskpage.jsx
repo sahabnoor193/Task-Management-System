@@ -17,6 +17,35 @@ export function TasksPage() {
   const [editingTask, setEditingTask] = useState(null);
   const [user, setUser] = useState(null); // 🔹 Store logged-in user info
   const { permission, requestNotificationPermission, scheduleNotification } = useNotification();
+  const [sortBy, setSortBy] = useState('date'); // Options: 'date', 'priority', 'title'
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' or 'desc'
+
+   // Filter and sort tasks
+   const filteredAndSortedTasks = tasks
+   .filter(task => {
+     return (
+       (activeFilter === 'all' || (activeFilter === 'completed' ? task.completed : !task.completed)) &&
+       (priorityFilter === 'all' || task.priority === priorityFilter) &&
+       (searchQuery === '' || task.title.toLowerCase().includes(searchQuery.toLowerCase()))
+     );
+   })
+   .sort((a, b) => {
+     const priorityOrder = { high: 3, medium: 2, low: 1 };
+     switch (sortBy) {
+       case 'date':
+         return sortOrder === 'asc'
+           ? new Date(a.createdAt) - new Date(b.createdAt)
+           : new Date(b.createdAt) - new Date(a.createdAt);
+       case 'priority':
+         return sortOrder === 'asc'
+           ? priorityOrder[a.priority] - priorityOrder[b.priority]
+           : priorityOrder[b.priority] - priorityOrder[a.priority];
+       case 'title':
+         return sortOrder === 'asc' ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
+       default:
+         return 0;
+     }
+   });
 
   const handleToggleTaskCompletion = async (taskId) => {
     try {
@@ -65,13 +94,13 @@ export function TasksPage() {
         throw new Error("Failed to update task");
       }
   
-      fetchTasks(); // Refresh tasks after updating
+      await fetchTasks(); // Refresh tasks after updating
       setIsFormOpen(false);
       setEditingTask(null);
     } catch (error) {
       console.error("Error updating task:", error);
     }
-  };
+  };  
   
   const handleDeleteTask = async (taskId) => {
     // if (!window.confirm("Are you sure you want to delete this task?")) return;
@@ -123,6 +152,29 @@ export function TasksPage() {
   };
 
   // Fetch tasks from backend
+  // const fetchTasks = async () => {
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     if (!token) {
+  //       navigate('/signin');
+  //       return;
+  //     }
+
+  //     const response = await fetch('http://localhost:5000/api/tasks', {
+  //       headers: { 'Authorization': `Bearer ${token}` },
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error('Failed to fetch tasks');
+  //     }
+
+  //     const data = await response.json();
+  //     setTasks(data);
+  //   } catch (error) {
+  //     console.error('Error fetching tasks:', error);
+  //   }
+  // };
+
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -130,21 +182,22 @@ export function TasksPage() {
         navigate('/signin');
         return;
       }
-
+  
       const response = await fetch('http://localhost:5000/api/tasks', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to fetch tasks');
       }
-
+  
       const data = await response.json();
-      setTasks(data);
+      setTasks([...data]);  // Ensure state updates by creating a new array
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
   };
+  
 
   // Initial fetch and notification setup
   useEffect(() => {
@@ -230,6 +283,25 @@ export function TasksPage() {
                 <Plus className="w-5 h-5" />
                 <span>Add Task</span>
               </motion.button>
+
+              <div className="flex gap-2">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition"
+                    >
+                      <option value="date">Sort by Date</option>
+                      <option value="priority">Sort by Priority</option>
+                      <option value="title">Sort by Title</option>
+                    </select>
+                    <button
+                      onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                      className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-200 transition"
+                    >
+                      {sortOrder === 'asc' ? '↑' : '↓'}
+                    </button>
+                  </div>
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -242,9 +314,9 @@ export function TasksPage() {
           </div>
 
           <AnimatePresence mode="popLayout">
-            {filteredTasks.length > 0 ? (
+            {filteredAndSortedTasks.length > 0 ? (
               <motion.div layout className="space-y-4">
-                {filteredTasks.map(task => (
+                {filteredAndSortedTasks.map(task => (
                   <TaskItem
                     key={task._id}
                     task={task}
