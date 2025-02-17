@@ -285,22 +285,22 @@ export function TasksPage() {
               </motion.button>
 
               <div className="flex gap-2">
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition"
-                    >
-                      <option value="date">Sort by Date</option>
-                      <option value="priority">Sort by Priority</option>
-                      <option value="title">Sort by Title</option>
-                    </select>
-                    <button
-                      onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                      className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-200 transition"
-                    >
-                      {sortOrder === 'asc' ? '↑' : '↓'}
-                    </button>
-                  </div>
+  <select
+    value={sortBy}
+    onChange={(e) => setSortBy(e.target.value)}
+    className="px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition text-black transform hover:scale-105 hover:shadow-lg"
+  >
+    <option value="date">Sort by Date</option>
+    <option value="priority">Sort by Priority</option>
+    <option value="title">Sort by Title</option>
+  </select>
+  <button
+    onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+    className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-black transition transform hover:scale-105 hover:shadow-lg"
+  >
+    {sortOrder === 'asc' ? '↑' : '↓'}
+  </button>
+</div>
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
