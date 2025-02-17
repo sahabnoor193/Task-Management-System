@@ -1,4 +1,4 @@
-Task Management Application
+taskify-A Task Management Application
 
 📌 Project Overview
 
@@ -53,3 +53,5 @@ npm start
 ->Start Frontend
 cd frontend
 npm run dev
+
+
