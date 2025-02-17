@@ -34,7 +34,7 @@ npm install
 
 ->Backend 
 cd backend
-npm install
+node server.js
 
 3. Set Up Environment Variables
 
@@ -53,5 +53,9 @@ npm start
 ->Start Frontend
 cd frontend
 npm run dev
+
+
+Short video:
+
 
 
