@@ -33,5 +33,9 @@
     "lucide-react": "^0.475.0",
     "react-router-dom": "^7.1.5",
     "recharts": "^2.15.1"
+=======
+    "node-modules": "^0.0.1",
+    "react-router-dom": "^7.1.5"
+>>>>>>> shanzay
   }
 }
